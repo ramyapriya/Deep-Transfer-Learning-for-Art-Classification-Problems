@@ -106,7 +106,7 @@ class ExperimentHandler(object):
             self.hdf5_path = os.path.dirname(self.dataset_storing_path+"/")
 
     def run_neural_architecture(self):
-        if experiment.neural_network == "ResNet":
+        if experiment.neural_network == "RijksVGG19":
             RijksVgg = RijksVGG19Net(self.hdf5_path, self.results_storing_path, self.n_labels, self.tl_mode)
             RijksVgg.train()
 
