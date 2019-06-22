@@ -1,4 +1,4 @@
-import os 
+import os
 
 import numpy as np
 import tensorflow as tf
@@ -17,38 +17,38 @@ from matplotlib import pylab as plt
 from keras.models import load_model
 
 
-RIJKS_MODEL_PATH = "../models/creator/VGG19/"
+RIJKS_MODEL_PATH = "../models/type/VGG19/"
 
 def show_image(image, grayscale = False, ax=None, title=''):
     if ax is None:
         plt.figure()
     plt.axis('off')
-    
+
     if len(image.shape) == 2 or grayscale == False:
         if len(image.shape) == 3:
             image = np.sum(np.abs(image), axis=2)
-            
+
         vmax = np.percentile(image, 99)
         vmin = np.min(image)
 
         plt.imshow(image, vmin=vmin, vmax=vmax)
         plt.title(title)
-    	
+
     	plt.show()
 
     else:
         image = image + 127.5
         image = image.astype('uint8')
-        
+
         plt.imshow(image)
         plt.title(title)
-    
+
     	plt.show()
 
 def load_image(file_path):
     im = PIL.Image.open(file_path)
     im = np.asarray(im)
-    
+
     return im - 127.5
 
 model = VGG19(weights='imagenet')
@@ -70,8 +70,8 @@ visual_bprop = VisualBackprop(model)
 mask = visual_bprop.get_mask(x[0])
 show_image(mask, ax=plt.subplot('121'), title='ImageNet VisualBackProp')
 
-trained_model = load_model(RIJKS_MODEL_PATH + 'creator_VGG19_model.h5')
-trained_model.load_weights(RIJKS_MODEL_PATH + 'creator_VGG19_weights.h5')
+trained_model = load_model(RIJKS_MODEL_PATH + 'type_VGG19_model.h5')
+trained_model.load_weights(RIJKS_MODEL_PATH + 'type_VGG19_weights.h5')
 
 trained_model.compile(loss='mean_squared_error', optimizer='adam')
 

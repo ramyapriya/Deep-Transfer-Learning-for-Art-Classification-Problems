@@ -26,8 +26,8 @@ from keras.callbacks import *
 from collections import Counter
 from PIL import Image
 
-Model_Path = "../../models/creator/VGG19/creator_VGG19_model.h5"
-Weights_Path = "../../models/creator/VGG19/creator_VGG19_weights.h5"
+Model_Path = "../../models/type/VGG19/type_VGG19_model.h5"
+Weights_Path = "../../models/type/VGG19/type_VGG19_weights.h5"
 
 
 class RijksVGG19Net(object):
@@ -135,8 +135,7 @@ class RijksVGG19Net(object):
             os.makedirs(self.model_path)
 
     def get_model(self):
-        initial_model = load_model(Model_Path)
-        initial_model.load_weights(Weights_Path)
+        initial_model.load_model(Weights_Path)
         initial_model.layers.pop()
 
         x = initial_model.layers[-1].output
