@@ -1,18 +1,18 @@
-import pandas as pd 
+import pandas as pd
 
 from resnet import ResNet
 
 from sklearn.preprocessing import LabelEncoder
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 
 from keras.utils import np_utils
 
 from collections import Counter
- 
-import numpy as np 
+
+import numpy as np
 
 import glob
-import os 
+import os
 import csv
 import time
 import h5py
@@ -26,10 +26,10 @@ class ExperimentHandler(object):
 		self.metadata_path = metadata_path
 		self.jpg_images_path = jpg_images_path
                 self.tl_mode = tl_mode
-		self.dataset_storing_path = dataset_path + dataset_name + "/" 
+		self.dataset_storing_path = dataset_path + dataset_name + "/"
 		self.results_storing_path = results_path + dataset_name + "/"
 
-		self.make_dataset_path() 
+		self.make_dataset_path()
 		self.make_results_path()
 
 	def make_dataset_path(self):
@@ -39,10 +39,10 @@ class ExperimentHandler(object):
 	def make_results_path(self):
 		if not os.path.exists(self.results_storing_path):
 			os.makedirs(self.results_storing_path)
-	
+
 	def get_metadata(self):
 		return(pd.read_csv(self.metadata_path))
-		
+
 	def get_images(self):
 		images = glob.glob(self.jpg_images_path+"*.jpg")
 		images = sorted(images)
@@ -58,16 +58,16 @@ class ExperimentHandler(object):
 
 		return(total_labels)
 
-	def filter_images_and_labels(self, images, labels):		
+	def filter_images_and_labels(self, images, labels):
 		to_remove = list()
 
 		for idx, (image, label) in enumerate(zip(images, labels[0])):
 			if label == " anoniem" or label == " ":
 				to_remove.append(idx)
-					
+
 		images = [i for j, i in enumerate(images) if j not in to_remove]
 		labels[0] = [i for j, i in enumerate(labels[0]) if j not in to_remove]
-	
+
 		return(images, labels)
 
 	def one_hot_encoding(self, total_labels):
@@ -90,7 +90,7 @@ class ExperimentHandler(object):
 		f = h5py.File(path)
 		dt = h5py.special_dtype(vlen=np.dtype('uint8'))
 		dset = f.create_dataset(split, (len(images), ), dtype=dt)
-			
+
 		for i in range(0, len(images)):
 
 			filename = images[i]
@@ -101,16 +101,16 @@ class ExperimentHandler(object):
 
 	def store_encodings_to_hdf5(self, path, encodings, split):
 		f = h5py.File(path)
-		dset = f.create_dataset(split, data=encodings)	
+		dset = f.create_dataset(split, data=encodings)
 
 	def make_data_splits(self, images, one_hot_encodings):
 		for challenge in CHALLENGES:
-			if not os.path.exists(self.dataset_storing_path+challenge+"/"): 
-				os.makedirs(self.dataset_storing_path+challenge+"/")	
+			if not os.path.exists(self.dataset_storing_path+challenge+"/"):
+				os.makedirs(self.dataset_storing_path+challenge+"/")
 
 				training_images_path = self.dataset_storing_path+challenge+"/"+"training_images.hdf5"
 				training_labels_path = self.dataset_storing_path+challenge+"/"+"training_labels.hdf5"
-		
+
 				self.hdf5_path = os.path.dirname(training_images_path)
 
 				print("Storing in: ", self.hdf5_path)
@@ -149,9 +149,9 @@ class ExperimentHandler(object):
 
 		images = self.get_images()
 		metadata = self.get_metadata()
-		
+
 		total_labels = self.extract_labels(metadata)
-		
+
 		filtered_data = self.filter_images_and_labels(images, total_labels)
 		images = filtered_data[0]
 		total_labels = filtered_data[1]
@@ -162,8 +162,8 @@ class ExperimentHandler(object):
 		self.run_neural_architecture()
 
 if __name__ == '__main__':
-	
-	import argparse 
+
+	import argparse
 
 	parser = argparse.ArgumentParser()
 
@@ -184,6 +184,6 @@ if __name__ == '__main__':
 	results_path = args.results_path
 	datasets_path = args.datasets_path
         tl_mode = args.tl_mode
-	
+
 	experiment = ExperimentHandler(ANN, dataset_name, metadata_path, jpg_images_path, results_path, datasets_path, tl_mode)
 	experiment.start_experiment()
