@@ -9,7 +9,7 @@ import h5py
 import random
 import gc
 
-import numpy as np 
+import numpy as np
 
 from sklearn.preprocessing import LabelEncoder
 
@@ -30,9 +30,9 @@ Model_Path =  "../../models/creator/VGG19/creator_VGG19_model.h5"
 Weights_Path = "../../models/creator/VGG19/creator_VGG19_weights.h5"
 
 class RijksVGG19Net(object):
-	def __init__(self, hdf5_path, results_path, nb_classes, challenge):
+	def __init__(self, hdf5_path, results_path, nb_classes, tl_mode):
 
-                self.tl_mode = "fine_tuning"
+        self.tl_mode = "fine_tuning"
 		self.width = 224
 		self.height = 224
 		self.channels = 3
@@ -42,7 +42,7 @@ class RijksVGG19Net(object):
 		self.test_batch_size = 32
 
 		self.epochs = 100
-		
+
 		self.activation = "relu"
 		self.optimizer = SGD(lr = 0.0001, momentum = 0.9)
 		self.loss = "categorical_crossentropy"
@@ -51,7 +51,7 @@ class RijksVGG19Net(object):
 		self.hdf5_path = hdf5_path + "/"
 		self.nb_classes = nb_classes
 
-		self.results_path = results_path + str(challenge) + "from_one_art_to_another/" + "VGG19/"
+		self.results_path = results_path + "from_one_art_to_another/" + "VGG19/"
 		self.make_results_path()
 
 	def load_images(self, name, split):
@@ -64,11 +64,11 @@ class RijksVGG19Net(object):
 	def load_encodings(self, name, split):
 		h5f_labels = h5py.File(self.hdf5_path + name,'r')
 		labels = h5f_labels[split][:]
-		
+
 		return(labels)
 
 	def my_generator(self, mode):
-		
+
 		if mode == "__train":
 			X_ = self.X_train
 			y_ = self.y_train
@@ -93,27 +93,27 @@ class RijksVGG19Net(object):
 			# Returns a random batch indefinitely from X_train, needed also in order to catch exception
 
 			batch = list()
-			
+
 			if len(X_) - end_batch < 0:
 				end_epoch = True
 				start_batch = start_batch - batch_size + 1
 				end_batch = end_batch - batch_size + 1
 
-			for imgs in X_[start_batch:end_batch]:					
+			for imgs in X_[start_batch:end_batch]:
                                 img = image.load_img(io.BytesIO(imgs), target_size = (self.width, self.height))
     	                        img = image.img_to_array(img)
                                 img = np.expand_dims(img, axis=0)
                                 img = preprocess_input(img)
 
-	    		        batch.append(img)     
+	    		        batch.append(img)
 
 			batch = np.asarray(batch)
-			
+
 			X_batch = np.reshape(batch, (batch.shape[0], self.width, self.height, self.channels))
 			y_batch = np.asarray([item for item in y_[start_batch:end_batch]])
 
-			yield(X_batch, y_batch) 
-			
+			yield(X_batch, y_batch)
+
 			start_batch += batch_size
 			end_batch += batch_size
 
@@ -125,7 +125,7 @@ class RijksVGG19Net(object):
 	def make_results_path(self):
 		if not os.path.exists(self.results_path):
 			os.makedirs(self.results_path)
-		
+
 	def make_model_path(self):
 		if not os.path.exists(self.model_path):
 			os.makedirs(self.model_path)
@@ -142,7 +142,7 @@ class RijksVGG19Net(object):
 
             return model
 
-	def setup_transfer_learning_mode(self, base_model):	
+	def setup_transfer_learning_mode(self, base_model):
 	    if self.tl_mode == "off_the_shelf":
                 for layer in base_model.layers[:-2]:
                     layer.trainable = False
@@ -153,10 +153,10 @@ class RijksVGG19Net(object):
             elif self.tl_mode == "fine_tuning":
                 for layer in base_model.layers:
                     layer.trainable = True
-                    base_model.compile(optimizer= self.optimizer, loss=self.loss, metrics=["accuracy"])     
+                    base_model.compile(optimizer= self.optimizer, loss=self.loss, metrics=["accuracy"])
 
 	def train(self):
-	
+
                 model = self.get_model()
                 self.setup_transfer_learning_mode(model)
 
@@ -179,5 +179,3 @@ class RijksVGG19Net(object):
 
 		#model.save(self.model_path+"TL_VGG19_model.h5")
 		#model.save_weights(self.model_path + "TL_VGG19_weights.h5")
-
-
