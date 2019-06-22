@@ -33,28 +33,28 @@ Weights_Path = "../../models/creator/VGG19/creator_VGG19_weights.h5"
 class RijksVGG19Net(object):
     def __init__(self, hdf5_path, results_path, nb_classes, tl_mode):
 
-    self.tl_mode = "fine_tuning"
-    self.width = 224
-    self.height = 224
-    self.channels = 3
+        self.tl_mode = "fine_tuning"
+        self.width = 224
+        self.height = 224
+        self.channels = 3
 
-    self.train_batch_size = 32
-    self.val_batch_size = 32
-    self.test_batch_size = 32
+        self.train_batch_size = 32
+        self.val_batch_size = 32
+        self.test_batch_size = 32
 
-    self.epochs = 100
+        self.epochs = 100
 
-    self.activation = "relu"
-    self.optimizer = SGD(lr=0.0001, momentum=0.9)
-    self.loss = "categorical_crossentropy"
-    self.early_stopping = keras.callbacks.EarlyStopping(
-        monitor='val_loss', patience=7, verbose=1, mode='auto')
+        self.activation = "relu"
+        self.optimizer = SGD(lr=0.0001, momentum=0.9)
+        self.loss = "categorical_crossentropy"
+        self.early_stopping = keras.callbacks.EarlyStopping(
+            monitor='val_loss', patience=7, verbose=1, mode='auto')
 
-    self.hdf5_path = hdf5_path + "/"
-    self.nb_classes = nb_classes
+        self.hdf5_path = hdf5_path + "/"
+        self.nb_classes = nb_classes
 
-    self.results_path = results_path + "from_one_art_to_another/" + "VGG19/"
-    self.make_results_path()
+        self.results_path = results_path + "from_one_art_to_another/" + "VGG19/"
+        self.make_results_path()
 
     def load_images(self, name, split):
 
@@ -180,11 +180,11 @@ class RijksVGG19Net(object):
         np.save(self.results_path + "transfer_learning_accuracies_shelf.npy",
                 tl_history.history["val_acc"])
 
-        tl_score = model.evaluate_generator(self.my_generator(
-            '__test'), len(self.X_test) // self.test_batch_size)
-        print('Test accuracy via Transfer-Learning:', tl_score[1])
-
-        np.save(self.results_path + "VGG19_test_accuracy.npy", tl_score[1])
+        # tl_score = model.evaluate_generator(self.my_generator(
+        #     '__test'), len(self.X_test) // self.test_batch_size)
+        # print('Test accuracy via Transfer-Learning:', tl_score[1])
+        #
+        # np.save(self.results_path + "VGG19_test_accuracy.npy", tl_score[1])
 
         # model.save(self.model_path+"TL_VGG19_model.h5")
-        #model.save_weights(self.model_path + "TL_VGG19_weights.h5")
+        # model.save_weights(self.model_path + "TL_VGG19_weights.h5")
