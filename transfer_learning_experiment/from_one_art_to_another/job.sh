@@ -17,5 +17,4 @@ datasets_path="/media/dev_hdd2/ramya/art_style_exps/approaches/hdf5_files" #The 
 
 tl_mode="fine_tuning" #Choose a pre-training mode from tl_modes
 
-python transfer_learning_experiment.py --dataset_name $dataset_name --ANN
-"RijksVGG19" --metadata_path $metadata_path --results_path $results_path --datasets_path $datasets_path --tl_mode $tl_mode
+python transfer_learning_experiment.py --dataset_name $dataset_name --ANN "RijksVGG19" --metadata_path $metadata_path --results_path $results_path --datasets_path $datasets_path --tl_mode $tl_mode

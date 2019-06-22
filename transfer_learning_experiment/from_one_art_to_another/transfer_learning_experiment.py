@@ -40,7 +40,7 @@ class ExperimentHandler(object):
 
     def filter_images_and_labels(self):
         df = pd.read_csv(self.metadata_path)
-        images = df['images'].tolist()
+        images = df['img_path'].tolist()
         labels = df['labels'].tolist()
         return(images, labels)
 
