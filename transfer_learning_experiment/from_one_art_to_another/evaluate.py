@@ -3,6 +3,7 @@ from keras.preprocessing import image
 from keras.applications.vgg19 import preprocess_input
 import keras
 import pandas as pd
+import io
 from keras.utils import np_utils
 from keras.models import Model, load_model
 from keras.layers import Dense
@@ -14,7 +15,7 @@ import h5py
 import sys
 
 
-def my_generator(self, mode, X_test, y_test, size=224, channels=3):
+def my_generator(mode, X_test, y_test, size=224, channels=3):
 
     if mode == "__test":
         X_ = X_test
@@ -94,6 +95,7 @@ def store_encodings_to_hdf5(path, encodings, split='test'):
 csv = sys.argv[1]
 hdf5_path = sys.argv[2]
 model_path = sys.argv[3]
+weights_path = sys.argv[4]
 df = pd.read_csv(csv)
 images = df['img_path'].tolist()
 labels = df['labels'].tolist()
@@ -113,6 +115,7 @@ X_test = load_images(testing_images_path, 'X_test')
 y_test = load_encodings(testing_labels_path, 'y_test')
 
 model = load_model(model_path)
+model.load_weights(weights_path)
 
 tl_score = model.evaluate_generator(my_generator('__test', X_test, y_test), len(X_test))
 print('Test accuracy via Transfer-Learning:', tl_score[1])
