@@ -57,7 +57,7 @@ class ExperimentHandler(object):
         f = h5py.File(path)
         dt = h5py.special_dtype(vlen=np.dtype('uint8'))
         dset = f.create_dataset(split, (len(images), ), dtype=dt)
-
+        p
         for i in range(0, len(images)):
 
             filename = images[i]
@@ -71,9 +71,7 @@ class ExperimentHandler(object):
         dset = f.create_dataset(split, data=encodings)
 
     def make_data_splits(self, images, labels):
-        if not os.path.exists(self.dataset_storing_path):
-            os.makedirs(self.dataset_storing_path)
-
+        if not os.path.isdir(self.dataset_storing_path):
             training_images_path = os.path.join(self.dataset_storing_path, "training_images.hdf5")
             training_labels_path = os.path.join(self.dataset_storing_path, "training_labels.hdf5")
 
@@ -120,7 +118,7 @@ class ExperimentHandler(object):
         one_hot_encodings = self.one_hot_encoding(total_labels)
 
         self.make_data_splits(images, one_hot_encodings)
-        self.run_neural_architecture()
+        # self.run_neural_architecture()
 
 if __name__ == '__main__':
 
