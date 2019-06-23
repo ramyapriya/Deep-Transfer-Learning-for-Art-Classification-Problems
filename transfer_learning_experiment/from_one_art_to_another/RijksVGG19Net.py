@@ -135,7 +135,7 @@ class RijksVGG19Net(object):
 
     def get_model(self):
         initial_model = keras.applications.vgg19.VGG19(include_top=True, weights='imagenet')
-        initial_model.load_weights(Weights_Path)
+        initial_model.load_weights(Weights_Path, by_name=True)
         initial_model.layers.pop()
 
         x = initial_model.layers[-1].output
