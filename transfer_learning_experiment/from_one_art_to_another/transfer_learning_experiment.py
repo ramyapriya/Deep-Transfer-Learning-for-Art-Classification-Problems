@@ -118,7 +118,7 @@ class ExperimentHandler(object):
         one_hot_encodings = self.one_hot_encoding(total_labels)
 
         self.make_data_splits(images, one_hot_encodings)
-        # self.run_neural_architecture()
+        self.run_neural_architecture()
 
 if __name__ == '__main__':
 
