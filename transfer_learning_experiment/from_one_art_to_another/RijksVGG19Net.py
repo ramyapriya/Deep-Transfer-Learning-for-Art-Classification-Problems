@@ -37,8 +37,8 @@ class RijksVGG19Net(object):
         self.height = 224
         self.channels = 3
 
-        self.train_batch_size = 32
-        self.val_batch_size = 32
+        self.train_batch_size = 64
+        self.val_batch_size = 64
         self.test_batch_size = 32
 
         self.epochs = 100
@@ -152,7 +152,7 @@ class RijksVGG19Net(object):
 
                 base_model.layers[-1].trainable = True
                 base_model.compile(optimizer="rmsprop",
-                                   loss=self.loss,  metrics=["accuracy"])
+                                   loss=self.loss, metrics=["accuracy"])
 
         elif self.tl_mode == "fine_tuning":
             for layer in base_model.layers:
@@ -171,19 +171,12 @@ class RijksVGG19Net(object):
         self.X_val = self.load_images('validation_images.hdf5', 'X_val')
         self.y_val = self.load_encodings('validation_labels.hdf5', 'y_val')
 
-        self.X_test = self.load_images('testing_images.hdf5', 'X_test')
-        self.y_test = self.load_encodings('testing_labels.hdf5', 'y_test')
+        # self.X_test = self.load_images('testing_images.hdf5', 'X_test')
+        # self.y_test = self.load_encodings('testing_labels.hdf5', 'y_test')
 
         tl_history = model.fit_generator(self.my_generator('__train'), steps_per_epoch=len(self.X_train) // self.train_batch_size, nb_epoch=self.epochs,
                                          validation_data=self.my_generator('__val'), validation_steps=len(self.X_val) // self.val_batch_size, callbacks=[self.early_stopping])
         np.save(os.path.join(self.results_path, "transfer_learning_accuracies_shelf.npy"),
                 tl_history.history["val_acc"])
-
-        # tl_score = model.evaluate_generator(self.my_generator(
-        #     '__test'), len(self.X_test) // self.test_batch_size)
-        # print('Test accuracy via Transfer-Learning:', tl_score[1])
-        #
-        # np.save(self.results_path + "VGG19_test_accuracy.npy", tl_score[1])
-
-        # model.save(self.model_path+"TL_VGG19_model.h5")
-        # model.save_weights(self.model_path + "TL_VGG19_weights.h5")
+        model.save(os.path.join(self.model_path, "TL_VGG19_model.h5"))
+        model.save_weights(os.path.join(self.model_path, "TL_VGG19_weights.h5"))

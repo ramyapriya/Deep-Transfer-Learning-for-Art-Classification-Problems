@@ -82,21 +82,21 @@ class ExperimentHandler(object):
             validation_images_path = os.path.join(self.dataset_storing_path, "validation_images.hdf5")
             validation_labels_path = os.path.join(self.dataset_storing_path, "validation_labels.hdf5")
 
-            testing_images_path = os.path.join(self.dataset_storing_path, "testing_images.hdf5")
-            testing_labels_path = os.path.join(self.dataset_storing_path, "testing_labels.hdf5")
+            # testing_images_path = os.path.join(self.dataset_storing_path, "testing_images.hdf5")
+            # testing_labels_path = os.path.join(self.dataset_storing_path, "testing_labels.hdf5")
 
             X_train, X_val, y_train, y_val = train_test_split(images, labels, test_size=0.2, random_state=42)
 
             self.store_images_to_hdf5(training_images_path, X_train, 'X_train')
             self.store_encodings_to_hdf5(training_labels_path, y_train, 'y_train')
 
-            X_val, X_test, y_val, y_test = train_test_split(X_val, y_val, test_size=0.5, random_state=42)
+            # X_val, X_test, y_val, y_test = train_test_split(X_val, y_val, test_size=0.5, random_state=42)
 
             self.store_images_to_hdf5(validation_images_path, X_val, 'X_val')
             self.store_encodings_to_hdf5(validation_labels_path, y_val, 'y_val')
 
-            self.store_images_to_hdf5(testing_images_path, X_test, 'X_test')
-            self.store_encodings_to_hdf5(testing_labels_path, y_test, 'y_test')
+            # self.store_images_to_hdf5(testing_images_path, X_test, 'X_test')
+            # self.store_encodings_to_hdf5(testing_labels_path, y_test, 'y_test')
 
             print("The splits have been created!")
         else:
@@ -106,7 +106,7 @@ class ExperimentHandler(object):
 
     def run_neural_architecture(self):
         if experiment.neural_network == "RijksVGG19":
-            RijksVgg = RijksVGG19Net(self.hdf5_path, self.results_storing_path, self.n_labels, self.tl_mode)
+            RijksVgg = RijksVGG19Net(self.dataset_storing_path, self.results_storing_path, self.n_labels, self.tl_mode)
             RijksVgg.train()
 
     def start_experiment(self):
