@@ -116,6 +116,12 @@ y_test = load_encodings(testing_labels_path, 'y_test')
 
 model = load_model(model_path)
 model.load_weights(weights_path)
+model.layers.pop()
+
+x = model.layers[-1].output
+x = Dense(n_labels, activation="softmax")(x)
+
+model = Model(input=model.input, output=x)
 
 tl_score = model.evaluate_generator(my_generator('__test', X_test, y_test), len(X_test))
 print('Test accuracy via Transfer-Learning:', tl_score[1])
