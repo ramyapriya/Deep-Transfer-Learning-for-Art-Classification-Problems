@@ -121,8 +121,9 @@ model.layers.pop()
 
 x = model.layers[-1].output
 x = Dense(n_labels, activation="softmax")(x)
+model.add(x)
 model.load_weights(weights_path)
-# model = Model(input=model.input, output=x)
+model = Model(input=model.input, output=x)
 model.compile(optimizer=SGD(lr=0.0001, momentum=0.9),
               loss="categorical_crossentropy", metrics=["accuracy"])
 tl_score = model.evaluate_generator(
