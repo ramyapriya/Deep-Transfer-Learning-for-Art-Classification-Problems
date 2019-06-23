@@ -71,28 +71,28 @@ class ExperimentHandler(object):
         dset = f.create_dataset(split, data=encodings)
 
     def make_data_splits(self, images, labels):
-        if not os.path.exists(self.dataset_storing_path+"/"):
-            os.makedirs(self.dataset_storing_path+"/")
+        if not os.path.exists(self.dataset_storing_path):
+            os.makedirs(self.dataset_storing_path)
 
-            training_images_path = self.dataset_storing_path+"/"+"training_images.hdf5"
-            training_labels_path = self.dataset_storing_path+"/"+"training_labels.hdf5"
+            training_images_path = os.path.join(self.dataset_storing_path, "training_images.hdf5")
+            training_labels_path = os.path.join(self.dataset_storing_path, "training_labels.hdf5")
 
             self.hdf5_path = os.path.dirname(training_images_path)
 
             print("Storing in: ", self.hdf5_path)
 
-            validation_images_path = self.dataset_storing_path+"/"+"validation_images.hdf5"
-            validation_labels_path = self.dataset_storing_path+"/"+"validation_labels.hdf5"
+            validation_images_path = os.path.join(self.dataset_storing_path, "validation_images.hdf5")
+            validation_labels_path = os.path.join(self.dataset_storing_path, "validation_labels.hdf5")
 
-            testing_images_path = self.dataset_storing_path+"/"+"testing_images.hdf5"
-            testing_labels_path = self.dataset_storing_path+"/"+"testing_labels.hdf5"
+            testing_images_path = os.path.join(self.dataset_storing_path, "testing_images.hdf5")
+            testing_labels_path = os.path.join(self.dataset_storing_path, "testing_labels.hdf5")
 
             X_train, X_val, y_train, y_val = train_test_split(images, labels, test_size=0.2, random_state=42)
 
             self.store_images_to_hdf5(training_images_path, X_train, 'X_train')
             self.store_encodings_to_hdf5(training_labels_path, y_train, 'y_train')
 
-            X_val, X_test, y_val, y_test = train_test_split(X_val, y_val, test_size=0.5 , random_state=42)
+            X_val, X_test, y_val, y_test = train_test_split(X_val, y_val, test_size=0.5, random_state=42)
 
             self.store_images_to_hdf5(validation_images_path, X_val, 'X_val')
             self.store_encodings_to_hdf5(validation_labels_path, y_val, 'y_val')
@@ -103,7 +103,8 @@ class ExperimentHandler(object):
             print("The splits have been created!")
         else:
             print("The splits are already there!")
-            self.hdf5_path = os.path.dirname(self.dataset_storing_path+"/")
+            self.hdf5_path = os.path.dirname(self.dataset_storing_path)
+            print (self.hdf5_path)
 
     def run_neural_architecture(self):
         if experiment.neural_network == "RijksVGG19":
