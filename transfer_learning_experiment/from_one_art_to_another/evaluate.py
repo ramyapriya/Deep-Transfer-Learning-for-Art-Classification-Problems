@@ -2,6 +2,7 @@ from sklearn.preprocessing import LabelEncoder
 from keras.preprocessing import image
 from keras.applications.vgg19 import preprocess_input
 import keras
+from keras.optimizers import SGD
 import pandas as pd
 import io
 from keras.utils import np_utils
@@ -57,7 +58,7 @@ def one_hot_encoding(total_labels):
     n_labels = len(Counter(total_labels).keys())
     encoded_y = encoder.fit_transform(total_labels)
     one_hot_encodings = np_utils.to_categorical(encoded_y, n_labels)
-    print (one_hot_encodings)
+    print(one_hot_encodings)
     return one_hot_encodings, n_labels
 
 
@@ -73,12 +74,14 @@ def store_images_to_hdf5(path, images, split='test'):
 
         dset[i] = np.fromstring(binary_data, dtype='uint8')
 
+
 def load_images(path, split):
 
     f = h5py.File(path, 'r')
     images = list(f[split])
 
     return(images)
+
 
 def load_encodings(path, split):
     h5f_labels = h5py.File(path, 'r')
@@ -109,7 +112,7 @@ if not os.path.exists(testing_images_path) or not os.path.exists(testing_labels_
     store_images_to_hdf5(testing_images_path, images, 'X_test')
     store_encodings_to_hdf5(testing_labels_path, one_hot_encodings, 'y_test')
 else:
-    print ('hdf5 paths already exist!')
+    print('hdf5 paths already exist!')
 
 X_test = load_images(testing_images_path, 'X_test')
 y_test = load_encodings(testing_labels_path, 'y_test')
@@ -122,6 +125,8 @@ x = model.layers[-1].output
 x = Dense(n_labels, activation="softmax")(x)
 
 model = Model(input=model.input, output=x)
-
-tl_score = model.evaluate_generator(my_generator('__test', X_test, y_test), len(X_test))
+model.compile(optimizer=SGD(lr=0.0001, momentum=0.9),
+              loss="categorical_crossentropy", metrics=["accuracy"])
+tl_score = model.evaluate_generator(
+    my_generator('__test', X_test, y_test), len(X_test))
 print('Test accuracy via Transfer-Learning:', tl_score[1])
