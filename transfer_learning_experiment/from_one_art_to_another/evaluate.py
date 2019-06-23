@@ -97,8 +97,7 @@ def store_encodings_to_hdf5(path, encodings, split='test'):
 
 csv = sys.argv[1]
 hdf5_path = sys.argv[2]
-model_path = sys.argv[3]
-weights_path = sys.argv[4]
+weights_path = sys.argv[3]
 df = pd.read_csv(csv)
 images = df['img_path'].tolist()
 labels = df['labels'].tolist()
@@ -117,14 +116,13 @@ else:
 X_test = load_images(testing_images_path, 'X_test')
 y_test = load_encodings(testing_labels_path, 'y_test')
 
-model = load_model(model_path)
-model.load_weights(weights_path)
+model = keras.applications.vgg19.VGG19()
 model.layers.pop()
 
 x = model.layers[-1].output
 x = Dense(n_labels, activation="softmax")(x)
-
-model = Model(input=model.input, output=x)
+model.load_weights(weights_path)
+# model = Model(input=model.input, output=x)
 model.compile(optimizer=SGD(lr=0.0001, momentum=0.9),
               loss="categorical_crossentropy", metrics=["accuracy"])
 tl_score = model.evaluate_generator(
