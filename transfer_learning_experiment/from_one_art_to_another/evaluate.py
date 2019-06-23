@@ -1,9 +1,11 @@
 from sklearn.preprocessing import LabelEncoder
 from keras.preprocessing import image
 from keras.applications.vgg19 import preprocess_input
-from RijksVGG19Net import load_images, load_encodings
+import keras
 import pandas as pd
 from keras.utils import np_utils
+from keras.models import Model, load_model
+from keras.layers import Dense
 from collections import Counter
 import numpy as np
 import os
@@ -77,7 +79,7 @@ def load_images(path, split):
 
     return(images)
 
-def load_encodings(path split):
+def load_encodings(path, split):
     h5f_labels = h5py.File(path, 'r')
     labels = h5f_labels[split][:]
 
@@ -91,7 +93,7 @@ def store_encodings_to_hdf5(path, encodings, split='test'):
 
 csv = sys.argv[1]
 hdf5_path = sys.argv[2]
-weights_path = sys.argv[3]
+model_path = sys.argv[3]
 df = pd.read_csv(csv)
 images = df['img_path'].tolist()
 labels = df['labels'].tolist()
@@ -101,20 +103,16 @@ one_hot_encodings, n_labels = one_hot_encoding(labels)
 testing_images_path = os.path.join(hdf5_path, "testing_images.hdf5")
 testing_labels_path = os.path.join(hdf5_path, "testing_labels.hdf5")
 
-store_images_to_hdf5(testing_images_path, images, 'X_test')
-store_encodings_to_hdf5(testing_labels_path, one_hot_encodings, 'y_test')
+if not os.path.exists(testing_images_path) or not os.path.exists(testing_labels_path):
+    store_images_to_hdf5(testing_images_path, images, 'X_test')
+    store_encodings_to_hdf5(testing_labels_path, one_hot_encodings, 'y_test')
+else:
+    print ('hdf5 paths already exist!')
 
 X_test = load_images(testing_images_path, 'X_test')
 y_test = load_encodings(testing_labels_path, 'y_test')
 
-model = keras.applications.vgg19.VGG19()
-model.load_weights(weights_path, by_name=True)
-initial_model.layers.pop()
+model = load_model(model_path)
 
-x = initial_model.layers[-1].output
-x = Dense(7, activation="softmax")(x)
-
-model = Model(input=initial_model.input, output=x)
-
-tl_score = model.evaluate_generator(my_generator('__test'), len(X_test) // test_batch_size)
+tl_score = model.evaluate_generator(my_generator('__test', X_test, y_test), len(X_test))
 print('Test accuracy via Transfer-Learning:', tl_score[1])
