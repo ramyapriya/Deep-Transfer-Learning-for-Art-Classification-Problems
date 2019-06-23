@@ -134,7 +134,7 @@ class RijksVGG19Net(object):
             os.makedirs(self.model_path)
 
     def get_model(self):
-        initial_model = keras.applications.vgg19.VGG19(include_top=True, weights='imagenet')
+        initial_model = keras.applications.vgg19.VGG19()
         initial_model.load_weights(Weights_Path, by_name=True)
         initial_model.layers.pop()
 
