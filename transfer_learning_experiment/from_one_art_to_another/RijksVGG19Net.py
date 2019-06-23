@@ -57,13 +57,13 @@ class RijksVGG19Net(object):
 
     def load_images(self, name, split):
 
-        f = h5py.File(self.hdf5_path + name, 'r')
+        f = h5py.File(os.path.join(self.hdf5_path, name), 'r')
         images = list(f[split])
 
         return(images)
 
     def load_encodings(self, name, split):
-        h5f_labels = h5py.File(self.hdf5_path + name, 'r')
+        h5f_labels = h5py.File(os.path.join(self.hdf5_path, name), 'r')
         labels = h5f_labels[split][:]
 
         return(labels)
@@ -176,7 +176,7 @@ class RijksVGG19Net(object):
 
         tl_history = model.fit_generator(self.my_generator('__train'), steps_per_epoch=len(self.X_train) // self.train_batch_size, nb_epoch=self.epochs,
                                          validation_data=self.my_generator('__val'), validation_steps=len(self.X_val) // self.val_batch_size, callbacks=[self.early_stopping])
-        np.save(self.results_path + "transfer_learning_accuracies_shelf.npy",
+        np.save(os.path.join(self.results_path, "transfer_learning_accuracies_shelf.npy"),
                 tl_history.history["val_acc"])
 
         # tl_score = model.evaluate_generator(self.my_generator(
