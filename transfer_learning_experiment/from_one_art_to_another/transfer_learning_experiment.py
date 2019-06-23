@@ -24,8 +24,8 @@ class ExperimentHandler(object):
         self.dataset_name = dataset_name
         self.metadata_path = metadata_path
         self.tl_mode = tl_mode
-        self.dataset_storing_path = dataset_path + dataset_name + "/"
-        self.results_storing_path = results_path + dataset_name + "/"
+        self.dataset_storing_path = os.path.join(dataset_path, dataset_name)
+        self.results_storing_path = os.path.join(results_path, dataset_name)
 
         self.make_dataset_path()
         self.make_results_path()

@@ -49,10 +49,10 @@ class RijksVGG19Net(object):
         self.early_stopping = keras.callbacks.EarlyStopping(
             monitor='val_loss', patience=7, verbose=1, mode='auto')
 
-        self.hdf5_path = hdf5_path + "/"
+        self.hdf5_path = hdf5_path
         self.nb_classes = nb_classes
 
-        self.results_path = results_path + "from_one_art_to_another/" + "VGG19/"
+        self.results_path = os.path.join(results_path, "from_one_art_to_another", "VGG19")
         self.make_results_path()
 
     def load_images(self, name, split):
