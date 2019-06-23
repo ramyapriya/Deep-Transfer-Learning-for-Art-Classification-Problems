@@ -100,7 +100,7 @@ class ExperimentHandler(object):
             print("The splits have been created!")
         else:
             print("The splits are already there!")
-            self.hdf5_path = os.path.dirname(self.dataset_storing_path)
+            self.hdf5_path = self.dataset_storing_path
             print (self.hdf5_path)
 
     def run_neural_architecture(self):
