@@ -48,12 +48,12 @@ class RijksVGG19Net(object):
         self.loss = "categorical_crossentropy"
         self.early_stopping = keras.callbacks.EarlyStopping(
             monitor='val_loss', patience=7, verbose=1, mode='auto')
-
         self.hdf5_path = hdf5_path
         self.nb_classes = nb_classes
 
         self.results_path = os.path.join(results_path, "from_one_art_to_another", "VGG19")
         self.make_results_path()
+        self.save_model = keras.callbacks.ModelCheckpoint(os.path.join(self.results_path, 'weights{epoch:08d}.h5'), save_weights_only=True, period=1)
 
     def load_images(self, name, split):
 
@@ -175,8 +175,8 @@ class RijksVGG19Net(object):
         # self.y_test = self.load_encodings('testing_labels.hdf5', 'y_test')
 
         tl_history = model.fit_generator(self.my_generator('__train'), steps_per_epoch=len(self.X_train) // self.train_batch_size, nb_epoch=self.epochs,
-                                         validation_data=self.my_generator('__val'), validation_steps=len(self.X_val) // self.val_batch_size, callbacks=[self.early_stopping])
+                                         validation_data=self.my_generator('__val'), validation_steps=len(self.X_val) // self.val_batch_size, callbacks=[self.early_stopping, self.save_model])
         np.save(os.path.join(self.results_path, "transfer_learning_accuracies_shelf.npy"),
                 tl_history.history["val_acc"])
-        model.save(os.path.join(self.model_path, "TL_VGG19_model.h5"))
-        model.save_weights(os.path.join(self.model_path, "TL_VGG19_weights.h5"))
+        model.save(os.path.join(self.results_path, "TL_VGG19_model.h5"))
+        model.save_weights(os.path.join(self.results_path, "TL_VGG19_weights.h5"))

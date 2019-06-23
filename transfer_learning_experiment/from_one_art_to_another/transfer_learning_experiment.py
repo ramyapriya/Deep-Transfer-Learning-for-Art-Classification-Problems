@@ -70,7 +70,7 @@ class ExperimentHandler(object):
         dset = f.create_dataset(split, data=encodings)
 
     def make_data_splits(self, images, labels):
-        if not os.path.isdir(self.dataset_storing_path) and not len(os.listdir(self.dataset_storing_path)):
+        if not os.path.isdir(self.dataset_storing_path) or len(os.listdir(self.dataset_storing_path)) == 0:
             training_images_path = os.path.join(self.dataset_storing_path, "training_images.hdf5")
             training_labels_path = os.path.join(self.dataset_storing_path, "training_labels.hdf5")
 
