@@ -25,14 +25,14 @@ def show_image(image, ori_img, op, grayscale=False, title=''):
         vmin = np.min(image)
         ax1.imshow(ori_img)
         ax2.imshow(image, vmin=vmin, vmax=vmax)
-        plt.title(title)
+        plt.suptitle(title)
 
     else:
         image = image + 127.5
         image = image.astype('uint8')
         ax1.imshow(ori_img)
         ax2.imshow(image)
-        plt.title(title)
+        plt.suptitle(title)
     plt.savefig(op)
 
 
