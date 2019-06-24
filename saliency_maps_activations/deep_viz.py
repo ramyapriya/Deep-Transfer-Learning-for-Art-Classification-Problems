@@ -43,7 +43,10 @@ def load_image(file_path):
 RIJKS_MODEL_PATH = sys.argv[1]
 RIJKS_WEIGHTS_PATH = sys.argv[2]
 csv = sys.argv[3]
+res = sys.argv[4]
 
+if not os.path.isdir(res):
+    os.makedirs(res)
 model = VGG19(weights='imagenet')
 model.compile(loss='mean_squared_error', optimizer='adam')
 
@@ -63,7 +66,7 @@ for idx, row in df.iterrows():
     visual_bprop = VisualBackprop(model)
 
     mask = visual_bprop.get_mask(x[0])
-    show_image(mask, ax=plt.subplot('121'), title='ImageNet VisualBackProp')
+    # show_image(mask, ax=plt.subplot('121'), title='ImageNet VisualBackProp')
 
     trained_model = load_model(RIJKS_MODEL_PATH)
     trained_model.load_weights(RIJKS_WEIGHTS_PATH)
@@ -73,4 +76,5 @@ for idx, row in df.iterrows():
     visual_bprop = VisualBackprop(trained_model)
 
     mask = visual_bprop.get_mask(x[0])
-    show_image(mask, ax=plt.subplot('121'), title=os.path.basename(row['img_path']) + '_' + row['labels'])
+    op = os.path.join(res, os.path.basename(row['img_path']).split('.')[0] + '_' + 'saliency_map.jpg')
+    show_image(mask, op, ax=plt.subplot('121'), title=os.path.basename(row['img_path']) + '_' + row['labels'])
