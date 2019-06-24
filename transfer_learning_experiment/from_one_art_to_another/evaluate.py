@@ -16,12 +16,12 @@ import h5py
 import sys
 
 
-def my_generator(mode, X_test, y_test, size=224, channels=3):
+def my_generator(mode, X_test, y_test, test_batch_size=64, size=224, channels=3):
 
     if mode == "__test":
         X_ = X_test
         y_ = y_test
-        batch_size = 1
+        batch_size = test_batch_size
 
     start_batch = 0
     end_batch = start_batch + batch_size
@@ -50,6 +50,9 @@ def my_generator(mode, X_test, y_test, size=224, channels=3):
         y_batch = np.asarray([item for item in y_[start_batch:end_batch]])
 
         yield(X_batch, y_batch)
+
+        start_batch += batch_size
+        end_batch += batch_size
 
 
 def one_hot_encoding(total_labels):
@@ -122,5 +125,5 @@ model.load_weights(weights_path)
 model.compile(optimizer=SGD(lr=0.0001, momentum=0.9),
               loss="categorical_crossentropy", metrics=["accuracy"])
 tl_score = model.evaluate_generator(
-    my_generator('__test', X_test, y_test), len(X_test))
+    my_generator('__test', X_test, y_test, test_batch_size), len(X_test) // test_batch_size)
 print('Test accuracy via Transfer-Learning:', tl_score[1])
