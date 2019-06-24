@@ -19,8 +19,8 @@ inp_csv = sys.argv[3]
 op_csv = sys.argv[4]
 
 # Load model
-m = load_model()
-m.load_weights()
+m = load_model(model_path)
+m.load_weights(weights_path)
 
 df = pd.read_csv(inp_csv)
 classes = sorted(pd.unique(df.labels))
