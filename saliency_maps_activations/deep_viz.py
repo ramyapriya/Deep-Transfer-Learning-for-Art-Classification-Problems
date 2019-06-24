@@ -11,9 +11,10 @@ from visual_backprop import VisualBackprop
 from keras.models import load_model
 
 
-def show_image(image, op, grayscale=False, ax=None, title=''):
-    if ax is None:
-        plt.figure()
+def show_image(image, ori_img, op, grayscale=False, title=''):
+    fig = plt.figure()
+    ax1 = fig.add_subplot('121')
+    ax2 = fig.add_subplot('122')
     plt.axis('off')
 
     if len(image.shape) == 2 or grayscale is False:
@@ -22,14 +23,15 @@ def show_image(image, op, grayscale=False, ax=None, title=''):
 
         vmax = np.percentile(image, 99)
         vmin = np.min(image)
-        plt.imshow(image, vmin=vmin, vmax=vmax)
+        ax1.imshow(ori_img)
+        ax2.imshow(image, vmin=vmin, vmax=vmax)
         plt.title(title)
 
     else:
         image = image + 127.5
         image = image.astype('uint8')
-
-        plt.imshow(image)
+        ax1.imshow(ori_img)
+        ax2.imshow(image)
         plt.title(title)
     plt.savefig(op)
 
@@ -59,6 +61,7 @@ visual_bprop = VisualBackprop(model)
 for idx, row in df.iterrows():
     img = image.load_img(row['img_path'], target_size=(224, 224))
     img = np.asarray(img)
+    ori_img = img
 
     # show_image(img, grayscale=False)
 
@@ -72,4 +75,4 @@ for idx, row in df.iterrows():
     # show_image(mask, ax=plt.subplot('121'), title='ImageNet VisualBackProp')
     mask = visual_bprop.get_mask(x[0])
     op = os.path.join(res, os.path.basename(row['img_path']).split('.')[0] + '_' + 'saliency_map.jpg')
-    show_image(mask, op, ax=plt.subplot('121'), title=os.path.basename(row['img_path']) + '_' + row['labels'])
+    show_image(mask, ori_img, op, title=os.path.basename(row['img_path']) + '_' + row['labels'])
