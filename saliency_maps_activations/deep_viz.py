@@ -47,11 +47,15 @@ res = sys.argv[4]
 
 if not os.path.isdir(res):
     os.makedirs(res)
-model = VGG19(weights='imagenet')
-model.compile(loss='mean_squared_error', optimizer='adam')
 
 df = pd.read_csv(csv)
 
+model = load_model(RIJKS_MODEL_PATH)
+model.load_weights(RIJKS_WEIGHTS_PATH)
+
+model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss="categorical_crossentropy")
+
+visual_bprop = VisualBackprop(model)
 for idx, row in df.iterrows():
     img = image.load_img(row['img_path'], target_size=(224, 224))
     img = np.asarray(img)
@@ -65,16 +69,7 @@ for idx, row in df.iterrows():
 
     visual_bprop = VisualBackprop(model)
 
-    mask = visual_bprop.get_mask(x[0])
     # show_image(mask, ax=plt.subplot('121'), title='ImageNet VisualBackProp')
-
-    trained_model = load_model(RIJKS_MODEL_PATH)
-    trained_model.load_weights(RIJKS_WEIGHTS_PATH)
-
-    trained_model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss="categorical_crossentropy")
-
-    visual_bprop = VisualBackprop(trained_model)
-
     mask = visual_bprop.get_mask(x[0])
     op = os.path.join(res, os.path.basename(row['img_path']).split('.')[0] + '_' + 'saliency_map.jpg')
     show_image(mask, op, ax=plt.subplot('121'), title=os.path.basename(row['img_path']) + '_' + row['labels'])
